@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * (c) Hashin Panakkaparambil <hashinp@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Core\Service;
+
+/**
+ * Description of AutoloadControllerResolver
+ *
+ * @author hashinpanakkaparambil
+ */
+class UrlControllerResolver implements ControllerResolver
+{
+
+    private $controllerDirs = array();
+    private $urlServiceMap = array();
+    private $resolvedControllers = array();
+
+    public function __construct(array $controllerDirs, array $urlServiceMap)
+    {
+        $this->controllerDirs = $controllerDirs;
+        set_include_path(implode(PATH_SEPARATOR,
+                                 $controllerDirs + array(get_include_path())));
+        $this->urlServiceMap = $urlServiceMap;
+    }
+
+    public function newInstance($class)
+    {
+        $prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($class),
+                                                                  $class));
+
+        return clone $prototype;
+    }
+
+    public function resolveServiceController($url)
+    {
+        if (isset($this->resolvedControllers[$url])) {
+            return $this->resolvedControllers[$url];
+        }
+
+        foreach ($this->urlServiceMap as $mappedUrl => $controller) {
+            if (preg_match('!' . $mappedUrl . '!', $url)) {
+                $this->resolvedControllers[$url] =
+                    $this->newInstance($controller);
+                return $this->resolvedControllers[$url];
+            }
+        }
+
+        return null;
+    }
+
+}

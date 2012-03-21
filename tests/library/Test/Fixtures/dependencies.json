@@ -1,0 +1,22 @@
+{
+    "path": "/path/to/file",
+    "accountService": {
+        "type" : "Test\\Fixtures\\AccountService",
+        //configure uses setters, only exposed properties can be configured
+        //setters cannot have more than one required parameter
+        //Arrays cannot have dependencies, if configured using an external file
+        //annotaions are ignored
+        "configure": {
+            "cache" : true,
+            "logger": "@InjectType:Test\\Fixtures\\LoggerInterface",
+            "options": "@Inject:accountOptions",
+            "inlineOptions": {
+                "defaultStatus": "open"
+            }
+        }
+    },
+    //if type is not given the dependency is treated as an array
+    "accountOptions": {
+        
+    }
+}
