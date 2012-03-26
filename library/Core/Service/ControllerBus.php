@@ -6,14 +6,15 @@
  */
 namespace Core\Service;
 
-use Core\Util\KeyValueStore;
+use Core\Util\KeyValueStore,
+    Core\Util\KeyValueStoreInterface;
 
 /**
  * Description of ControllerBus
  *
  * @author hashin
  */
-class ControllerBus
+class ControllerBus implements KeyValueStoreInterface
 {
     private $pool;
     

@@ -11,7 +11,7 @@ namespace Core\Util;
  *
  * @author hashin
  */
-class KeyValueStore extends \ArrayObject
+class KeyValueStore extends \ArrayObject implements KeyValueStoreInterface
 {
     public function set($name, $value)
     {

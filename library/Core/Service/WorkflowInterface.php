@@ -10,9 +10,9 @@ namespace Core\Service;
  *
  * @author hashin
  */
-interface HookRunnerInterface
+interface WorkflowInterface
 {
-    public function registerHook(HookInterface $hook);
+    public function addStep(WorkflowStepInterface $step);
     
-    public function runHooks();
+    public function run();
 }

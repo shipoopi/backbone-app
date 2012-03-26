@@ -6,8 +6,8 @@
  */
 namespace Test\Mocks;
 
-use Core\Service\HookInterface,
-    Core\Service\ControllerBus,
+use Core\Service\WorkflowStepInterface,
+    Core\Util\KeyValueStoreInterface,
     Core\Service\Request;
 
 /**
@@ -15,9 +15,9 @@ use Core\Service\HookInterface,
  *
  * @author hashin
  */
-class RequestGenerationHookMock implements HookInterface
+class RequestGenerationHookMock implements WorkflowStepInterface
 {
-    public function run(ControllerBus $bus)
+    public function run(KeyValueStoreInterface $bus)
     {
         $bus->set('request', new Request());
     }

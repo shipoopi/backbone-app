@@ -13,7 +13,7 @@ use Behat\Gherkin\Node\PyStringNode,
     Behat\Gherkin\Node\TableNode;
 
 use Core\Util\Validator,
-    Core\Service\HookRunner,
+    Core\Service\Workflow,
     Core\Service\ControllerBus;
 
 use Test\Mocks\RequestGenerationHookMock;
@@ -27,7 +27,7 @@ use PHPUnit_Framework_Assert as Assert;
  *
  * @author hashin
  */
-class HookRunnerContext extends BehatContext
+class WorkflowContext extends BehatContext
 {
     private $hookRunner;
     private $requestGenerationHook;
@@ -37,7 +37,7 @@ class HookRunnerContext extends BehatContext
     private function getHookRunnerCache()
     {
         $reflHook = new ReflectionObject($this->hookRunner);
-        $reflCache = $reflHook->getProperty('hooks');
+        $reflCache = $reflHook->getProperty('steps');
         $reflCache->setAccessible(true);
         return $reflCache->getValue($this->hookRunner);
     }
@@ -46,7 +46,7 @@ class HookRunnerContext extends BehatContext
      */
     public function aHookrunner()
     {
-        $this->hookRunner = new HookRunner(new ControllerBus());
+        $this->hookRunner = new Workflow(new Core\Util\KeyValueStore());
     }
     
     /**
@@ -62,7 +62,7 @@ class HookRunnerContext extends BehatContext
      */
     public function iRegisterTheHook()
     {
-        $this->hookRunner->registerHook($this->requestGenerationHook);
+        $this->hookRunner->addStep($this->requestGenerationHook);
     }
     
     /**
@@ -80,7 +80,7 @@ class HookRunnerContext extends BehatContext
      */
     public function iRunTheHooks()
     {
-        $this->controllerBus = $this->hookRunner->runHooks();
+        $this->controllerBus = $this->hookRunner->run();
     }
 
     /**
@@ -90,7 +90,7 @@ class HookRunnerContext extends BehatContext
 
     {
         Assert::assertInstanceOf(
-            'Core\Service\ControllerBus', $this->controllerBus);
+            'Core\Util\KeyValueStoreInterface', $this->controllerBus);
     }
     
     /**

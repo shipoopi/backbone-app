@@ -44,7 +44,7 @@ class FrontController
     public function run()
     {
         $this->registerIncludePaths();
-        
+          
     }
 
 }

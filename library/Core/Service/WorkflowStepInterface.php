@@ -6,14 +6,14 @@
  */
 namespace Core\Service;
 
-use Core\Service\ControllerBus;
+use Core\Util\KeyValueStoreInterface;
 
 /**
  * Description of Hook
  *
  * @author hashin
  */
-interface HookInterface
+interface WorkflowStepInterface
 {
-    public function run(ControllerBus $bus);
+    public function run(KeyValueStoreInterface $bus);
 }
