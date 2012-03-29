@@ -13,5 +13,6 @@ namespace Core\Service;
  */
 class Request
 {
+    private $requestedUrl;
 
 }

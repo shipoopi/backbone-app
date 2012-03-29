@@ -6,16 +6,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Core\Authorization;
-
+namespace Core\Service;
 /**
- * Description of Requestor
  *
  * @author hashinpanakkaparambil
  */
-class Requestor
+interface ServiceInterceptorInterface
 {
-    private $identity;
-    private $role;
-    private $data;
+    
 }

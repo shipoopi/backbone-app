@@ -6,16 +6,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Core\Authorization;
+namespace Core\Service;
 
 /**
- * Description of SecuredOperation
+ * Description of Route
  *
  * @author hashinpanakkaparambil
  */
-class SecuredOperation
+class Route
 {
-    private $name;
-    private $rules;
-    private $allowedRequestors;
+    //put your code here
 }

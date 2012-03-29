@@ -6,16 +6,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Core\Authorization;
+namespace Test\Mocks;
 
-use Core\Transformation\Request;
-
+use Core\Service\Request;
 /**
+ * Description of RequestMock
  *
  * @author hashinpanakkaparambil
  */
-interface Rule
+class RequestMock extends Request
 {
-    public function getRuleName();
-    public function isMet(Request $request, Operation $operation);
+    
 }
