@@ -14,7 +14,12 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     {
         $config = new \Core\Service\FrontControllerConfig();
         $config->addServiceControllerDirectory(APPLICATION_PATH . '/services');
-        $config->addUrlServiceMapEntry('/users', 'UserService');
+        $config->addUrlServiceMapEntry('/users', 'UserService',
+                array(
+                    'get' => 'getUser',
+                    'getCollection' => 'getUsers',
+                    'post' => 'updateUser',
+                    'delete' => 'deleteUser'));
         $config->setBaseUrl('/api/index/');
         $controller = Core\Service\FrontControllerFactory::newFrontController($config);
         Zend_Registry::set('serviceController', $controller);

@@ -24,6 +24,7 @@ class FrontController
     private $includePaths = array();
     private $controllerResolver;
     private $request;
+    private $response;
 
     public function __construct(
             FrontControllerConfig $config,
@@ -70,13 +71,31 @@ class FrontController
         $baseUrl = $this->config->getBaseUrl();
         $strippedUrl = $this->cutOffBaseUrl($url, $baseUrl);
         
-        $controller = $this->controllerResolver
+        $controllerSetting = $this->controllerResolver
                 ->resolveServiceController($strippedUrl);
-        if (!$controller) {
+
+        if (!$controllerSetting) {
             throw new \LogicException('Url is not mapped to a controller');
         }
+
+        $controller = $controllerSetting['service'];
+        $methods = $controllerSetting['config']['methods'];
+        $method  = null;
         
-        return $controller->run($this->request);
+        if ($this->request->isGet()) {
+            
+            if (isset($methods['get'])
+                   || isset($methods['GET'])) {
+                $method = $methods['get'];
+            } else {
+                throw new \LogicException('Method not allowed');
+            }
+            
+            
+            
+        }
+        
+        return $controller->$method($this->request);
     }
 
 }

@@ -13,14 +13,15 @@ use Core\Service\ServiceInterface,
  *
  * @author hash
  */
-class UserService implements ServiceInterface
+class UserService
 {
     
-    public function run(Request $request)
+    public function getUser(Request $request)
     {
         $vars = array('message' => 'Hello world');
         return new RepresentationFromFile(
                 $vars, APPLICATION_PATH 
                 . '/services/representations/users.html');
     }
+    
 }

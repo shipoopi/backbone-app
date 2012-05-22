@@ -39,4 +39,10 @@ class Request
         return $_SERVER['REQUEST_URI'];
     }
     
+    public function isGet()
+    {
+        return isset($this->server['REQUEST_METHOD'])
+            && strtolower($this->server['REQUEST_METHOD']) == 'get';
+    }
+    
 }
