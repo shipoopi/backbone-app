@@ -6,6 +6,8 @@
  */
 namespace Core\Service;
 
+use Core\Util\KeyValueStore;
+
 /**
  * Description of Request
  *
@@ -13,5 +15,28 @@ namespace Core\Service;
  */
 class Request
 {
-
+    private $params;
+    private $post;
+    private $get;
+    private $request;
+    private $server;
+    private $env;
+    private $cookie;
+    
+    public function __construct()
+    {
+        $this->params = new KeyValueStore();
+        $this->post  = $_POST;
+        $this->get   = $_GET;
+        $this->request = $_REQUEST;
+        $this->server = $_SERVER;
+        $this->cookie = $_COOKIE;
+        $this->env = $_ENV;
+    }
+    
+    public function getUrl()
+    {
+        return $_SERVER['REQUEST_URI'];
+    }
+    
 }

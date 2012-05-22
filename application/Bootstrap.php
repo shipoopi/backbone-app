@@ -10,5 +10,14 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         $front->getRouter()->addRoute('rest', $restRoute);
     }
 
+    public function _initServices()
+    {
+        $config = new \Core\Service\FrontControllerConfig();
+        $config->addServiceControllerDirectory(APPLICATION_PATH . '/services');
+        $config->setBaseUrl('/api/index/');
+        $controller = Core\Service\FrontControllerFactory::newFrontController($config);
+        Zend_Registry::set('serviceController', $controller);
+        return $controller;
+    }
 }
 

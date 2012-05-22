@@ -17,6 +17,8 @@ class FrontControllerConfig
 {
     private $serviceControllerDirs = array();
     private $serviceControllers = array();
+    private $urlServiceMap = array();
+    private $baseUrl = '';
     
     public function addServiceControllerDirectory($dir)
     {
@@ -63,5 +65,32 @@ class FrontControllerConfig
     {
         return $this->serviceControllers;
     }
-
+    
+    public function getUrlServiceMap()
+    {
+        return $this->urlServiceMap;
+    }
+    
+    public function setUrlServicMap(array $map)
+    {
+        $this->urlServiceMap = $map;
+        return $this;
+    }
+    
+    public function addUrlServiceMapEntry($url, $service)
+    {
+        $this->urlServiceMap[(string)$url] = ($service);
+        return $this;
+    }
+    
+    public function setBaseUrl($url)
+    {
+        $this->baseUrl = (string) $url;
+        return $this;
+    }
+    
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
 }
