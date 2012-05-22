@@ -27,8 +27,7 @@ class FrontController
     private $response;
 
     public function __construct(
-            FrontControllerConfig $config,
-            ControllerResolver $controllerResolver)
+    FrontControllerConfig $config, ControllerResolver $controllerResolver)
     {
         $this->config = $config;
         $this->controllerResolver = $controllerResolver;
@@ -39,7 +38,7 @@ class FrontController
 
     private function addIncludePaths(array $paths)
     {
-        $this->includePaths =  $this->includePaths + $paths;
+        $this->includePaths = $this->includePaths + $paths;
         return $this;
     }
 
@@ -48,7 +47,7 @@ class FrontController
         set_include_path(implode(PATH_SEPARATOR, $this->includePaths));
         return $this;
     }
-    
+
     private function prepareRequest()
     {
         $this->request = new Request();
@@ -58,11 +57,12 @@ class FrontController
     {
         $url = ltrim($url, '/');
         $url = rtrim($url, '/');
+        $url .= '/';
         $baseUrl = ltrim($baseUrl, '/');
         $baseUrl = rtrim($baseUrl, '/');
         return str_replace($baseUrl, '', $url);
     }
-    
+
     public function run()
     {
         $this->registerIncludePaths();
@@ -70,9 +70,9 @@ class FrontController
         $url = $this->request->getUrl();
         $baseUrl = $this->config->getBaseUrl();
         $strippedUrl = $this->cutOffBaseUrl($url, $baseUrl);
-        
+
         $controllerSetting = $this->controllerResolver
-                ->resolveServiceController($strippedUrl);
+            ->resolveServiceController($strippedUrl);
 
         if (!$controllerSetting) {
             throw new \LogicException('Url is not mapped to a controller');
@@ -80,21 +80,34 @@ class FrontController
 
         $controller = $controllerSetting['service'];
         $methods = $controllerSetting['config']['methods'];
-        $method  = null;
+        $method = null;
+
+        //derive parameters
+        $url = $controllerSetting['config']['url'];
+        preg_match('!^' . $url . '$!', $strippedUrl, $matches);
+        array_shift($matches);
+        $params = $controllerSetting['config']['params'];
+        $urlParams = array();
+        if (count($params) == count($matches)) {
+            $urlParams = array_combine($params, $matches);
+        }
+
+        $this->request->setParams($urlParams);
         
         if ($this->request->isGet()) {
+            if (!isset($methods['get'])) {
+                throw new LogicException('Method not allowed');
+            }
+            $method = $methods['get'];
             
-            if (isset($methods['get'])
-                   || isset($methods['GET'])) {
-                $method = $methods['get'];
-            } else {
+        } else if ($this->request->isGetCollection()) {
+
+            if (!isset($methods['getCollection'])) {
                 throw new \LogicException('Method not allowed');
             }
-            
-            
-            
+            $method = $methods['getCollection'];
         }
-        
+
         return $controller->$method($this->request);
     }
 

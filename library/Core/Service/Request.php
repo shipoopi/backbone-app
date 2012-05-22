@@ -6,7 +6,8 @@
  */
 namespace Core\Service;
 
-use Core\Util\KeyValueStore;
+use Core\Util\KeyValueStore,
+    Core\Util\KeyValueStoreInterface;
 
 /**
  * Description of Request
@@ -42,7 +43,26 @@ class Request
     public function isGet()
     {
         return isset($this->server['REQUEST_METHOD'])
-            && strtolower($this->server['REQUEST_METHOD']) == 'get';
+            && strtolower($this->server['REQUEST_METHOD']) == 'get'
+            && !$this->isGetCollection();
     }
     
+    public function isGetCollection()
+    {
+        if ($this->params->get('id')) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public function setParams(array $params)
+    {
+        $this->params = new KeyValueStore($params);
+    }
+    
+    public function getParams()
+    {
+        return $this->params;
+    }
 }

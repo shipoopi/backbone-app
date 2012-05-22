@@ -78,10 +78,13 @@ class FrontControllerConfig
         return $this;
     }
     
-    public function addUrlServiceMapEntry($url, $service, array $methods)
+    public function addUrlServiceMapEntry($url, array $params, $service, array $methods)
     {
+        $this->urlServiceMap[(string)$url]['url'] = (string) $url;
         $this->urlServiceMap[(string)$url]['service'] = (string) $service;
         $this->urlServiceMap[(string)$url]['methods'] =  $methods;
+        $this->urlServiceMap[(string)$url]['params'] = $params;
+        
         return $this;
     }
     

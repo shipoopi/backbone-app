@@ -24,4 +24,11 @@ class UserService
                 . '/services/representations/users.html');
     }
     
+    public function getUsers(Request $request)
+    {
+         $vars = array('message' => 'Hello world');
+         return new RepresentationFromFile(
+                $vars, APPLICATION_PATH 
+                . '/services/representations/users.json');
+    }
 }

@@ -1,0 +1,4 @@
+{
+    "title" : "multiusers",
+    "message": "<?= $this->message?>"
+}

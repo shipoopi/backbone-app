@@ -21,7 +21,8 @@ class UrlControllerResolver implements ControllerResolver
     private $urlServiceMap = array();
     private $resolvedControllers = array();
 
-    public function __construct(array $controllerDirs, array $urlServiceMap)
+    public function __construct(
+        array $controllerDirs, array $urlServiceMap)
     {
         $this->controllerDirs = $controllerDirs;
         $includePaths = $controllerDirs;
@@ -47,7 +48,7 @@ class UrlControllerResolver implements ControllerResolver
 
         foreach ($this->urlServiceMap as $mappedUrl => $controller) {
             
-            if (preg_match('!^(' . $mappedUrl . '$)!', $url, $matches)) {
+            if (preg_match('!^(' . $mappedUrl . '/?$)!', $url, $matches)) {
                 
                 $this->resolvedControllers[$matches[1]]['service'] =
                     $this->newInstance($controller['service']);
