@@ -24,8 +24,10 @@ class UrlControllerResolver implements ControllerResolver
     public function __construct(array $controllerDirs, array $urlServiceMap)
     {
         $this->controllerDirs = $controllerDirs;
-        set_include_path(implode(PATH_SEPARATOR,
-                                 $controllerDirs + array(get_include_path())));
+        $includePaths = $controllerDirs;
+        $includePaths[] = get_include_path();
+        
+        set_include_path(implode(PATH_SEPARATOR, $includePaths));
         $this->urlServiceMap = $urlServiceMap;
     }
 

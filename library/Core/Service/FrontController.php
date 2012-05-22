@@ -38,7 +38,7 @@ class FrontController
 
     private function addIncludePaths(array $paths)
     {
-        $this->includePaths += $paths;
+        $this->includePaths =  $this->includePaths + $paths;
         return $this;
     }
 
@@ -69,11 +69,14 @@ class FrontController
         $url = $this->request->getUrl();
         $baseUrl = $this->config->getBaseUrl();
         $strippedUrl = $this->cutOffBaseUrl($url, $baseUrl);
+        
         $controller = $this->controllerResolver
                 ->resolveServiceController($strippedUrl);
         if (!$controller) {
             throw new \LogicException('Url is not mapped to a controller');
         }
+        
+        return $controller->run($this->request);
     }
 
 }

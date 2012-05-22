@@ -27,6 +27,7 @@ class FrontControllerConfig
             throw new ConfigurationException(sprintf(
                 ConfigurationException::DIRECTORY_NOT_READABLE, $dir));
         }
+        $this->serviceControllerDirs[] = $dir;
         return $this;
     }
     
