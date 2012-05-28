@@ -84,7 +84,7 @@ class FrontController
 
         //derive parameters
         $url = $controllerSetting['config']['url'];
-        preg_match('!^' . $url . '$!', $strippedUrl, $matches);
+        preg_match('!^/?' . $url . '/?$!', $strippedUrl, $matches);
         array_shift($matches);
         $params = $controllerSetting['config']['params'];
         $urlParams = array();
