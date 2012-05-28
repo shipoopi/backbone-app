@@ -23,6 +23,10 @@ class Request
     private $server;
     private $env;
     private $cookie;
+    private $method;
+    private $methodKey = 'REQUEST_METHOD';
+    private $methodOverride;
+    private $overrideKey = 'X-HTTP-METHOD-OVERRIDE';
     
     public function __construct()
     {
@@ -35,25 +39,92 @@ class Request
         $this->env = $_ENV;
     }
     
+    private function getOverride()
+    {
+        if (isset($this->server[$this->overrideKey])
+            && !$this->methodOverride) {
+            $this->methodOverride = strtolower(
+                $this->server[$this->overrideKey]);
+        }
+        
+        return $this->methodOverride;
+    }
+    
     public function getUrl()
     {
         return $_SERVER['REQUEST_URI'];
     }
     
+    public function getMethod()
+    {
+        if (!$this->method 
+            && isset($this->server[$this->methodKey])) {
+            $this->method = strtolower($this->server[$this->methodKey]);
+        }
+        
+        return $this->method;
+    }
+    
     public function isGet()
     {
-        return isset($this->server['REQUEST_METHOD'])
-            && strtolower($this->server['REQUEST_METHOD']) == 'get'
+        return $this->getMethod() == 'get'
             && !$this->isGetCollection();
     }
     
     public function isGetCollection()
     {
+        if ($this->getMethod() != 'get') {
+            return false;
+        }
+            
         if ($this->params->get('id')) {
             return false;
         }
         
         return true;
+    }
+    
+    public function isPut()
+    {
+        if ($this->getMethod() != 'post'
+            && $this->getMethod() != 'put') {
+            return false;
+        }
+        
+        if (!$this->params->get('id')) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public function isPost()
+    {
+        if ($this->getMethod() != 'post') {
+            return false;
+        }
+        
+        if ($this->params->get('id')) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    public function isDelete()
+    {
+        if (!$this->params->get('id')) {
+            return false;
+        }
+       
+        if ($this->getMethod() != 'delete' 
+            && !($this->getMethod() == 'post' 
+            &&  $this->getOverride() == 'delete')) {
+            return false;
+        }
+
+        return true;
+            
     }
     
     public function setParams(array $params)

@@ -94,20 +94,33 @@ class FrontController
 
         $this->request->setParams($urlParams);
         
+        $methodKey = 'get';
         if ($this->request->isGet()) {
-            if (!isset($methods['get'])) {
-                throw new LogicException('Method not allowed');
-            }
-            $method = $methods['get'];
-            
+            $methodKey = 'get';
         } else if ($this->request->isGetCollection()) {
-
-            if (!isset($methods['getCollection'])) {
-                throw new \LogicException('Method not allowed');
-            }
-            $method = $methods['getCollection'];
+            $methodKey = 'getCollection';
+        } else if($this->request->isPost()) {
+            $methodKey = 'post';    
+        } else if ($this->request->isPut()) {
+            $methodKey = 'put';
+        } else if ($this->request->isDelete()){
+            $methodKey = 'delete';
+        } else {
+            throw new \LogicException('Invalid method');
         }
-
+        
+        if (!isset($methods[$methodKey])) {
+            throw new \LogicException(sprintf(
+                'Method %s not allowed', $methodKey));    
+        }
+        
+        $method = $methods[$methodKey];
+        if (!method_exists($controller, $method)) {
+            throw new \LogicException(sprintf(
+                'Method %s not found in service %s',
+                $method, get_class($controller)));
+        }
+        
         return $controller->$method($this->request);
     }
 

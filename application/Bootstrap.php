@@ -19,7 +19,8 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
                 array(
                     'get' => 'getUser',
                     'getCollection' => 'getUsers',
-                    'post' => 'updateUser',
+                    'post' => 'createUser',
+                    'put' => 'updateUser',
                     'delete' => 'deleteUser'));
         
         $config->setBaseUrl('/api/index/');
