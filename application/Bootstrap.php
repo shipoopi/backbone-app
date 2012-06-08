@@ -14,18 +14,29 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
     {
         $config = new \Core\Service\FrontControllerConfig();
         $config->addServiceControllerDirectory(APPLICATION_PATH . '/services');
+     
+        $configFile = APPLICATION_PATH . '/repository/services.json';
+        $services   = json_decode(file_get_contents($configFile), true);
+
+        if (!isset($services)) {
+            throw new LogicException('services not defined');
+        }
         
-        $config->addUrlServiceMapEntry('/users/(\d+)?', array('id'), 'UserService',
-                array(
-                    'get' => 'getUser',
-                    'getCollection' => 'getUsers',
-                    'post' => 'createUser',
-                    'put' => 'updateUser',
-                    'delete' => 'deleteUser'));
+        foreach ($services['services'] as $url => $serviceConfig) {
+            $config->setServiceConfig($url, $serviceConfig);
+        }
         
         $config->setBaseUrl('/api/index/');
         $controller = Core\Service\FrontControllerFactory::newFrontController($config);
         Zend_Registry::set('serviceController', $controller);
         return $controller;
+        
+    }
+
+    public function _initPaths()
+    {
+        $paths = array(
+            'services' => APPLICATION_PATH . '/repository/services.json');
+        Zend_Registry::set('configPaths', $paths);
     }
 }

@@ -12,8 +12,18 @@
         <?= $this->headScript() ?>
 
     </head>
-    
+
     <body>
-        <?= $this->layout()->content ?> 
+        <div class="container-fluid" id="app-view">
+           <?= $this->render('_topMenu.phtml') ?>
+           <div class="row-fluid">
+               <div class="span2">
+                   <!--Sidebar content-->
+               </div>
+               <div class="span10" id="main-pane">
+                   <?= $this->layout()->content ?> 
+                </div>
+            </div>
+        </div>
     </body>
 </html>

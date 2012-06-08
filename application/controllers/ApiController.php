@@ -12,4 +12,3 @@ class Default_ApiController extends Zend_Controller_Action
     }
 
 }
-

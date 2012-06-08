@@ -5,7 +5,7 @@ define([
   'collections/services',
   'views/services',
   'text!templates/service-form.html'
-  ], function($, _, Backbone, Services, ServicesView, serviceFormTemplate){
+  ], function($, _, Backbone, Todos, TodoView, serviceFormTemplate){
       
 
   var AppView = Backbone.View.extend({
@@ -15,7 +15,7 @@ define([
     el: $("#app-view"),
 
     // Our template for the line of statistics at the bottom of the app.
-    serviceFormTemplate: _.template(serviceFormTemplate),
+    serviceFormTemplate: _.template(statsTemplate),
 
     // Delegated events for creating new items, and clearing completed ones.
     events: {
@@ -29,28 +29,53 @@ define([
     // collection, when items are added or changed. Kick things off by
     // loading any preexisting todos that might be saved in *localStorage*.
     initialize: function() {
-      _.bindAll(this, 'addService');
+      _.bindAll(this, 'addService', 'addAll', 'render', 'toggleAllComplete');
 
-      this.mainPane = this.$('#main-pane');
-      Services.bind('add',     this.addOne);
-      Services.fetch();
+      this.input    = this.$("#new-todo");
+      this.allCheckbox = this.$(".mark-all-done")[0];
+
+      Todos.bind('add',     this.addOne);
+      Todos.bind('reset',   this.addAll);
+      Todos.bind('all',     this.render);
+
+      Todos.fetch();
     },
 
     // Re-rendering the App just means refreshing the statistics -- the rest
     // of the app doesn't change.
     render: function() {
-      this.$('#main-pane').html(this.serviceFormTemplate());
+      var done = Todos.done().length;
+      var remaining = Todos.remaining().length;
 
+      this.$('#todo-stats').html(this.statsTemplate({
+        total:      Todos.length,
+        done:       done,
+        remaining:  remaining
+      }));
+
+      this.allCheckbox.checked = !remaining;
     },
 
     // Add a single todo item to the list by creating a view for it, and
     // appending its element to the `<ul>`.
-    addService: function(todo) {
+    addOne: function(todo) {
       var view = new TodoView({model: todo});
       this.$("#todo-list").append(view.render().el);
     },
 
-   
+    // Add all items in the **Todos** collection at once.
+    addAll: function() {
+      Todos.each(this.addOne);
+    },
+
+    // Generate the attributes for a new Todo item.
+    newAttributes: function() {
+      return {
+        content: this.input.val(),
+        order:   Todos.nextOrder(),
+        done:    false
+      };
+    },
 
     // If you hit return in the main input field, create new **Todo** model,
     // persisting it to *localStorage*.

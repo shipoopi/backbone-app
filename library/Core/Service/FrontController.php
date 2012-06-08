@@ -19,7 +19,6 @@ use Core\Service\ControllerResolver;
 class FrontController
 {
 
-    private $serviceControllers = array();
     private $config;
     private $includePaths = array();
     private $controllerResolver;
@@ -78,6 +77,12 @@ class FrontController
             throw new \LogicException('Url is not mapped to a controller');
         }
 
+        if (!isset($controllerSetting['service'])
+            || !isset($controllerSetting['config'])
+            || !isset($controllerSetting['config']['methods'])) {
+            throw new \LogicException('Invalid configuration');
+        }
+
         $controller = $controllerSetting['service'];
         $methods = $controllerSetting['config']['methods'];
         $method = null;
@@ -86,41 +91,44 @@ class FrontController
         $url = $controllerSetting['config']['url'];
         preg_match('!^/?' . $url . '/?$!', $strippedUrl, $matches);
         array_shift($matches);
-        $params = $controllerSetting['config']['params'];
-        $urlParams = array();
-        if (count($params) == count($matches)) {
-            $urlParams = array_combine($params, $matches);
+        //set params if params exist
+        if (isset($controllerSetting['config']['params'])) {
+            $params = $controllerSetting['config']['params'];
+            $urlParams = array();
+            if (count($params) == count($matches)) {
+                $urlParams = array_combine($params, $matches);
+            }
+
+            $this->request->setParams($urlParams);
         }
 
-        $this->request->setParams($urlParams);
-        
         $methodKey = 'get';
         if ($this->request->isGet()) {
             $methodKey = 'get';
         } else if ($this->request->isGetCollection()) {
             $methodKey = 'getCollection';
-        } else if($this->request->isPost()) {
-            $methodKey = 'post';    
+        } else if ($this->request->isPost()) {
+            $methodKey = 'post';
         } else if ($this->request->isPut()) {
             $methodKey = 'put';
-        } else if ($this->request->isDelete()){
+        } else if ($this->request->isDelete()) {
             $methodKey = 'delete';
         } else {
             throw new \LogicException('Invalid method');
         }
-        
+
         if (!isset($methods[$methodKey])) {
             throw new \LogicException(sprintf(
-                'Method %s not allowed', $methodKey));    
+                    'Method %s not allowed', $methodKey));
         }
-        
+
         $method = $methods[$methodKey];
         if (!method_exists($controller, $method)) {
             throw new \LogicException(sprintf(
-                'Method %s not found in service %s',
-                $method, get_class($controller)));
+                    'Method %s not found in service %s', $method,
+                    get_class($controller)));
         }
-        
+
         return $controller->$method($this->request);
     }
 

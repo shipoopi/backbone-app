@@ -45,18 +45,19 @@ class UrlControllerResolver implements ControllerResolver
         if (isset($this->resolvedControllers[$url])) {
             return $this->resolvedControllers[$url];
         }
-
+        
         foreach ($this->urlServiceMap as $mappedUrl => $controller) {
             
             if (preg_match('!^(' . $mappedUrl . '/?$)!', $url, $matches)) {
                 
                 $this->resolvedControllers[$matches[1]]['service'] =
-                    $this->newInstance($controller['service']);
+                    $this->newInstance($controller['class']);
                 $this->resolvedControllers[$matches[1]]['config'] = $controller; 
                 
                 return $this->resolvedControllers[$matches[1]];
             }
         }
+      
         
         return null;
     }
