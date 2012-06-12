@@ -1,0 +1,13 @@
+
+body{
+    font-family: "lucida grande", tahoma, verdana;
+}
+
+table.services caption {text-align: left; padding-bottom: 10px;}
+
+form {margin: 0px;}
+
+#main-pane #widget-services {width: 50%}
+
+/** services widget **/
+#widget-services table  {border-collapse: collapse}

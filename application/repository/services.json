@@ -1,0 +1,29 @@
+{
+    "services":{
+        "\/users\/(\\d+)?":{
+            "url":"\/users\/(\\d+)?",
+            "service":"UserService",
+            "params":["id"],
+            "methods":{
+                "get":"getUser",
+                "getCollection":"getUsers",
+                "post":"createUser",
+                "put":"updateUser",
+                "delete":"deleteUser"
+            }
+        },
+        "\/services\/(\\d+)?":{
+            "service":"ServiceManagementService",
+            "url":"\/services\/(\\d+)?",
+            "class":"CoreServices\\ServiceManagementService",
+            "params":["id"],
+            "methods":{
+                "get":"getService",
+                "getCollection":"getServices",
+                "post":"createService",
+                "put":"updateService",
+                "delete":"deleteService"
+            }
+        }
+    }
+}

@@ -23,7 +23,6 @@ class FrontController
     private $includePaths = array();
     private $controllerResolver;
     private $request;
-    private $response;
 
     public function __construct(
     FrontControllerConfig $config, ControllerResolver $controllerResolver)
@@ -129,7 +128,12 @@ class FrontController
                     get_class($controller)));
         }
 
-        return $controller->$method($this->request);
+        $representation = $controller->$method($this->request);
+        if ($representation instanceof Representations\MediaTypeProvider) {
+            header('Content-Type : '. $representation->getMediaType());
+        }
+        
+        return $representation;
     }
 
 }

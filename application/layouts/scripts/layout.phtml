@@ -2,10 +2,14 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Workflow magic</title>
+        <link href="/css/reset.css" media="screen"
+              rel="stylesheet" type="text/css"></link> 
         <script data-main="js/main" src="js/libs/require/require.js"></script>
         <link href="/css/libs/jquery/jquery-ui.css"
               media="screen" rel="stylesheet" type="text/css"></link>
         <link href="/css/libs/bootstrap/bootstrap.min.css" media="screen"
+              rel="stylesheet" type="text/css"></link> 
+        <link href="/css/main.css" media="screen"
               rel="stylesheet" type="text/css"></link> 
 
         <?= $this->headLink() ?>
@@ -15,13 +19,13 @@
 
     <body>
         <div class="container-fluid" id="app-view">
-           <?= $this->render('_topMenu.phtml') ?>
-           <div class="row-fluid">
-               <div class="span2">
-                   <!--Sidebar content-->
-               </div>
-               <div class="span10" id="main-pane">
-                   <?= $this->layout()->content ?> 
+            <?= $this->render('_topMenu.phtml') ?>
+            <div class="row-fluid" style="margin-top: 50px;">
+                <div class="span2">
+                    <!--Sidebar content-->
+                </div>
+                <div class="span10" id="main-pane">
+                    <?= $this->layout()->content ?> 
                 </div>
             </div>
         </div>
