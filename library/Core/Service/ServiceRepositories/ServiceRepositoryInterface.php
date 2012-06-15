@@ -8,6 +8,8 @@
  */
 namespace Core\Service\ServiceRepositories;
 
+use Core\Service\Service;
+
 /**
  *
  * @author hashinpanakkaparambil

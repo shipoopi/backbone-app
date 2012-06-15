@@ -24,9 +24,9 @@ class Collection extends \ArrayObject
     {
         $data = array();
         
-        foreach ($this as $item) {
+        foreach ($this as $key => $item) {
             if ($item instanceof ArrayRepresentable) {
-                $data[] = $item->toArray();
+                $data[$key] = $item->toArray();
             } else {
                 throw \LogicExeption('Item is not an array representable');
             }

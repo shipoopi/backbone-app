@@ -30,13 +30,14 @@ class Request
     
     public function __construct()
     {
-        $this->params = new KeyValueStore();
+        
         $this->post  = $_POST;
         $this->get   = $_GET;
         $this->request = $_REQUEST;
         $this->server = $_SERVER;
         $this->cookie = $_COOKIE;
         $this->env = $_ENV;
+        $this->params = new KeyValueStore($this->request);
     }
     
     private function getOverride()
@@ -130,10 +131,30 @@ class Request
     public function setParams(array $params)
     {
         $this->params = new KeyValueStore($params);
+        return $this;
+    }
+    
+    public function addParams(array $params)
+    {
+        foreach ($params as $name => $val) {
+            $this->params->set($name, $value);
+        }
+        return $this;
     }
     
     public function getParams()
     {
         return $this->params;
+    }
+    
+    public function get($name)
+    {
+        return $this->params->get($name);
+    }
+    
+    public function set($name, $value)
+    {
+        $this->params->set($name, $value);
+        return $this;
     }
 }

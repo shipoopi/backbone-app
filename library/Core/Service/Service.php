@@ -19,7 +19,7 @@ use Core\Util\ArrayRepresentable;
 class Service implements ArrayRepresentable
 {
 
-    private $name;
+    private $service;
     private $class;
     private $url;
     private $methods = array();
@@ -84,7 +84,7 @@ class Service implements ArrayRepresentable
     public function toArray()
     {
         return array(
-            'name' => $this->name,
+            'service' => $this->name,
             'className' => $this->class,
             'url' => $this->url,
             'methods' => $this->methods);

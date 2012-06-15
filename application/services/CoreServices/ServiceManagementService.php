@@ -12,7 +12,9 @@ namespace CoreServices;
 use Core\Service\Service,
     Core\Service\Representations\RepresentationFromFile,
     Core\Service\Representations\ArrayJsonRepresentation,
-    Core\Util\Collection;
+    Core\Util\Collection,
+    Core\Service\Request,
+    Core\Service\ServiceRepositories\FileServiceRepository;
 
 /**
  * Description of ServiceManagementService
@@ -21,11 +23,17 @@ use Core\Service\Service,
  */
 class ServiceManagementService
 {
-
-    public function createService()
+    
+    public function createService(Request $request)
     {
-        return new ArrayJsonRepresentation(
-            new Service('userService', 'UserService', '/users'));
+        $url = $request->get('url');
+        $name = $request->get('name');
+        $class = $request->get('class');
+        $service = new Service($name, $class, $url);
+        $file = APPLICATION_PATH . '/repository/app-services.json';
+        $serviceRepository = new FileServiceRepository($file);
+        $serviceRepository->save($service);
+        return new ArrayJsonRepresentation($service);
     }
 
     public function deleteService()

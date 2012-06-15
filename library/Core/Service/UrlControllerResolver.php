@@ -50,8 +50,13 @@ class UrlControllerResolver implements ControllerResolver
             
             if (preg_match('!^(' . $mappedUrl . '/?$)!', $url, $matches)) {
                 
+                if (!isset($controller['className'])) {
+                    throw new \LogicException(sprintf(
+                        'Wrong service configuration for url %s', $url));
+                }
+                
                 $this->resolvedControllers[$matches[1]]['service'] =
-                    $this->newInstance($controller['class']);
+                    $this->newInstance($controller['className']);
                 $this->resolvedControllers[$matches[1]]['config'] = $controller; 
                 
                 return $this->resolvedControllers[$matches[1]];

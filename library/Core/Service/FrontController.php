@@ -98,7 +98,7 @@ class FrontController
                 $urlParams = array_combine($params, $matches);
             }
 
-            $this->request->setParams($urlParams);
+            $this->request->addParams($urlParams);
         }
 
         $methodKey = 'get';

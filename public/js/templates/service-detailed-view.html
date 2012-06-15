@@ -1,0 +1,43 @@
+<div class="modal hide" id="modal-service">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">×</button>
+        <h3><%= service %></h3>
+    </div>
+    <div class="modal-body">
+
+        <div class="service">
+            <div id="service-pane" class="subpane">
+                <p class="url">Url: <%= url %></p> 
+                <p class="url">Class: <%= className %></p>
+                <strong>Methods</strong>
+                <ul class="methods">
+                    <%
+                    $.each(methods, function(index, method) {
+                    %>
+                    <li><%= index %> <%= method %></li>
+
+                    <%
+                    });
+                    %>
+                </ul>
+
+                <div class="method-controls">
+                    <button class="add-method btn btn-primary">Add method</button>
+                </div>
+            </div>
+            <div id="method-create-view-pane" class="subpane hide">
+                <form action="/services/methods" method="post">
+                    <fieldset>
+                        <label>Method</label> <input type="text" name="method"/>
+                        <label>Fulfilment function</label> <input type="text" name="fulfiller"/>
+                    </fieldset>
+                </form>
+                <div class="controls">
+                    <a class="btn cancel-add-method">Cancel</a> <a class="btn btn-primary">Add method</a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,1 @@
+{"services":{"\/bills\/(\\d+)":{"service":"Tesco","className":"BillingService","url":"\/bills\/(\\d+)","methods":[]},"\/payments\/(\\d+)?":{"service":"dsffd","className":"AccountsService","url":"\/payments\/(\\d+)?","methods":[]}}}

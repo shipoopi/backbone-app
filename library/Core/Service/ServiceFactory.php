@@ -19,13 +19,16 @@ class ServiceFactory
 
     public static function fromArray(array $data)
     {
-        $isRequiredFieldsSet = isset($data['name'])
+        $isRequiredFieldsSet = isset($data['service'])
             && isset($data['className']) && isset($data['url']);
         if (!$isRequiredFieldsSet) {
             throw new \RuntimeException('Malformed service configuration');
         }
 
-        $service = new Service($data['name'], $data['className'], $data['url']);
+        $service = new Service($data['service'], $data['className'], $data['url']);
+        if (isset($data['methods'])) {
+            $service->setMethods($data['methods']);
+        }
         
         return $service;
     }

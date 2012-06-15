@@ -42,7 +42,6 @@ define([
                 this.el = $(WidgetHtml);
                 this.appendTo.append(this.el);
                 this.modal =  $('#modal-service');
-                console.log(this.modal);
                 
                 Services.bind('add',     this.addService);
                 Services.bind('all',     this.render);

@@ -10,7 +10,8 @@
 namespace Core\Service\ServiceRepositories;
 
 use Core\Util\Collection,
-    Core\Service\ServiceFactory;
+    Core\Service\ServiceFactory,
+    Core\Service\Service;
 
 /**
  * Description of FileServiceRepository
@@ -26,14 +27,14 @@ class FileServiceRepository implements ServiceRepositoryInterface
     public function __construct($file)
     {
         
-        if (!is_file($file) || is_writable($file)) {
+        if (!is_file($file) || !is_writable($file)) {
             throw new \RuntimeException(sprintf(
                     'File %s is not readable/writable', $file));
         }
 
         $this->file = $file;
         $config = json_decode(file_get_contents($file), true);
-        if ($config) {
+        if (!$config) {
             throw new \RuntimeException('invalid configuration');
         }
 
@@ -44,15 +45,15 @@ class FileServiceRepository implements ServiceRepositoryInterface
         $this->services = new Collection();
         
         foreach ($config['services'] as $data) {
-            $this->services[] = ServiceFactory::fromArray($data);
+            $this->services[$data['url']] = ServiceFactory::fromArray($data);
         }
     }
 
     public function save(Service $service)
     {
-        $this->services[] = $service;
+        $this->services[$service->getUrl()] = $service; 
         file_put_contents($this->file,
-            json_encode($this->services->toArray()));
+            json_encode(array('services' => $this->services->toArray())));
         return true;
     }
 
