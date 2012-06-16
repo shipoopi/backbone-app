@@ -16,6 +16,7 @@ class KeyValueStore extends \ArrayObject implements KeyValueStoreInterface
     public function set($name, $value)
     {
         $this[(string) $name] = $value;
+        return $this;
     }
     
     public function get($name)

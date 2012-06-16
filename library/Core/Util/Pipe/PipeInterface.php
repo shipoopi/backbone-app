@@ -6,14 +6,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Core\Service;
+namespace Core\Util\Pipe;
+
+use Core\Util\KeyValueStoreInterface;
 
 /**
- * Description of ServiceController
+ * Description of PipelineRunnable
  *
  * @author hashinpanakkaparambil
  */
-class ServiceController
+interface PipeInterface
 {
-    
+    public function flow(KeyValueStoreInterface $bus);
 }

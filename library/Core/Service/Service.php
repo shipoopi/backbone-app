@@ -9,20 +9,23 @@
 
 namespace Core\Service;
 
-use Core\Util\ArrayRepresentable;
+use Core\Util\ArrayRepresentable,
+    Core\Util\KeyValueStoreInterface,
+    Core\Util\Pipe\PipeInterface;
 
 /**
  * Description of Service
  *
  * @author hashinpanakkaparambil
  */
-class Service implements ArrayRepresentable
+class Service implements ArrayRepresentable, PipeInterface
 {
 
-    private $service;
+    private $name;
     private $class;
     private $url;
     private $methods = array();
+    private $callable;
 
     public function __construct(
         $name, $class, $url, $methods = array())
@@ -73,6 +76,11 @@ class Service implements ArrayRepresentable
         $this->methods = $methods;
     }
     
+    public function setCallable($controller, $method)
+    {
+        $this->callable = array($controller, $method);
+    }
+    
     public function addMethod($httpMethod, $fulfilmentMethod)
     {
         $httpMethod = (string) $httpMethod;
@@ -90,5 +98,12 @@ class Service implements ArrayRepresentable
             'methods' => $this->methods);
     }
 
-    
+    public function flow(KeyValueStoreInterface $bus)
+    {
+        $request = $bus->get('request');
+        $serviceResponse = 
+            call_user_func_array($this->callable, array($request));
+        $bus->set('serviceResult', $serviceResponse);
+    }
+
 }

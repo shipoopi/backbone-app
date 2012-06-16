@@ -54,9 +54,9 @@ class ServiceManagementService
     public function getServices()
     {
 
-        return new ArrayJsonRepresentation(new Collection(array(
+        return array(
                     new Service('userService', 'UserService', '/users', array('get' => 'getUser')),
-                    new Service('paymentService', 'PaymentService', '/payments'))));
+                    new Service('paymentService', 'PaymentService', '/payments'));
     }
 
 }

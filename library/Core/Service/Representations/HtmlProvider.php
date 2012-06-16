@@ -9,11 +9,20 @@
 namespace Core\Service\Representations;
 
 /**
+ * Description of XmlProvider
  *
  * @author hashinpanakkaparambil
  */
-interface MediaTypeProvider
+class HtmlProvider implements MediaTypeProvider
 {
-    public function getMediaType();
-    public function getMediaContent($serviceResult);
+
+    public function getMediaType()
+    {
+        return 'text/html';
+    }
+
+    public function getMediaContent($serviceResult)
+    {
+        return '<p/>';
+    }
 }

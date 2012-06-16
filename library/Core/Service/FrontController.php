@@ -9,7 +9,11 @@
 
 namespace Core\Service;
 
-use Core\Service\ControllerResolver;
+use Core\Service\ControllerResolver,
+    Core\Util\KeyValueStore,
+    Core\Util\Pipe\Pipeline,
+    Core\Util\Pipe\PipeInterface;
+    
 
 /**
  * Description of FrontController
@@ -25,7 +29,7 @@ class FrontController
     private $request;
 
     public function __construct(
-    FrontControllerConfig $config, ControllerResolver $controllerResolver)
+        FrontControllerConfig $config, ControllerResolver $controllerResolver)
     {
         $this->config = $config;
         $this->controllerResolver = $controllerResolver;
@@ -49,29 +53,21 @@ class FrontController
     private function prepareRequest()
     {
         $this->request = new Request();
+        $baseUrl = $this->config->getBaseUrl();
+        $this->request->setBaseUrl($baseUrl);
     }
 
-    private function cutOffBaseUrl($url, $baseUrl)
-    {
-        $url = ltrim($url, '/');
-        $url = rtrim($url, '/');
-        $url .= '/';
-        $baseUrl = ltrim($baseUrl, '/');
-        $baseUrl = rtrim($baseUrl, '/');
-        return str_replace($baseUrl, '', $url);
-    }
+    
 
     public function run()
     {
         $this->registerIncludePaths();
         $this->prepareRequest();
         $url = $this->request->getUrl();
-        $baseUrl = $this->config->getBaseUrl();
-        $strippedUrl = $this->cutOffBaseUrl($url, $baseUrl);
-
+        
         $controllerSetting = $this->controllerResolver
-            ->resolveServiceController($strippedUrl);
-
+            ->resolveServiceController($this->request->getServiceUrl());
+        
         if (!$controllerSetting) {
             throw new \LogicException('Url is not mapped to a controller');
         }
@@ -85,21 +81,6 @@ class FrontController
         $controller = $controllerSetting['service'];
         $methods = $controllerSetting['config']['methods'];
         $method = null;
-
-        //derive parameters
-        $url = $controllerSetting['config']['url'];
-        preg_match('!^/?' . $url . '/?$!', $strippedUrl, $matches);
-        array_shift($matches);
-        //set params if params exist
-        if (isset($controllerSetting['config']['params'])) {
-            $params = $controllerSetting['config']['params'];
-            $urlParams = array();
-            if (count($params) == count($matches)) {
-                $urlParams = array_combine($params, $matches);
-            }
-
-            $this->request->addParams($urlParams);
-        }
 
         $methodKey = 'get';
         if ($this->request->isGet()) {
@@ -128,12 +109,42 @@ class FrontController
                     get_class($controller)));
         }
 
-        $representation = $controller->$method($this->request);
-        if ($representation instanceof Representations\MediaTypeProvider) {
-            header('Content-Type : '. $representation->getMediaType());
+        $serviceName = '';
+        if (isset($controllerSetting['config']['service'])) {
+            $serviceName = $controllerSetting['config']['service'];
         }
         
-        return $representation;
+        $service = new Service(
+            $serviceName,  $url, $methods,
+            $controllerSetting['config']['className']);
+        
+        $service->setCallable($controller, $method);
+        $this->response = new Response();
+        
+        $serviceBus = new ServiceBus($this->request, $this->response);        
+        $pipeLine = new ServicePipeline($service, $serviceBus);
+        
+        //Url param extractor
+        $urlFormat = $controllerSetting['config']['url'];
+        $params    = array();
+        if ($controllerSetting['config']['params']) {
+            $params = $controllerSetting['config']['params'];
+        }
+        
+        $contentNegotiator = new Interceptors\ContentNegotiator();
+        $contentNegotiator->registerMediaTypeProvider(new Representations\DefaultMediaProvider());
+        $contentNegotiator->registerMediaTypeProvider(new Representations\JsonProvider());
+        $contentNegotiator->registerMediaTypeProvider(new Representations\HtmlProvider());
+        
+        $pipeLine->addInterceptor(
+            new Interceptors\UrlParamExtractor($urlFormat, $params));
+        $pipeLine->addInterceptor($contentNegotiator);
+        
+        $pipeLine->flow();
+        
+        $representation = $serviceBus->get('serviceResult');
+        
+        return $serviceBus->getResponse();
     }
 
 }

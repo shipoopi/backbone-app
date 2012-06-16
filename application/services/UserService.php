@@ -14,10 +14,15 @@ use Core\Service\ServiceInterface,
  * Description of UserService
  *
  * @author hash
+ * @Service
  */
 class UserService
 {
 
+    /**
+     * @param Request $request
+     * @return \Core\Service\Representations\RepresentationFromFile 
+     */
     public function getUser(Request $request)
     {
         $vars = array('message' => 'Hello world');

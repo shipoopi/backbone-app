@@ -16,13 +16,35 @@ use Core\Util\ArrayRepresentable;
  *
  * @author hashinpanakkaparambil
  */
-class ArrayJsonRepresentation implements RepresentationInterface,
-    MediaTypeProvider
+class ArrayJsonRepresentation implements RepresentationInterface
 {
 
     private $representable = array();
     private $root;
 
+    private function getDataArray($representable)
+    {
+        $data = array();
+        $iterableData = array();
+        if (is_array($representable)) {
+            $iterableData = $representable;
+        } else if ($representable instanceof ArrayRepresentable) {
+            $iterableData = $representable->toArray();
+        }
+        
+        if (!empty($iterableData)) {
+            foreach ($iterableData as $key => $val) {
+                if (is_array($val) || $val instanceof ArrayRepresentable) {
+                    $data[$key] = $this->getDataArray($val); 
+                } else {
+                    $data[$key] = $val;
+                }
+            }
+        }
+        
+        return $data;
+    }
+    
     public function __construct($representable, $root = null)
     {
         $this->representable = $representable;
@@ -31,17 +53,7 @@ class ArrayJsonRepresentation implements RepresentationInterface,
 
     public function getAsString()
     {
-        $data = array();
-        if (is_array($this->representable)) {
-            $data = $this->representable;
-        } else if ($this->representable instanceof ArrayRepresentable) {
-            $data = $this->representable->toArray();
-        } else {
-            throw new \UnexpectedValueException(sprintf(
-                'Representable has to be an array or 
-                    instance of ArrayRepresentable'));
-        }
-
+        $data = $this->getDataArray($this->representable);
         if (is_string($this->root)) {
             return json_encode(array($this->root => $data));
         } else {

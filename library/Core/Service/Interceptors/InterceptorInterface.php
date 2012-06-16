@@ -6,14 +6,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Core\Service\Representations;
+namespace Core\Service\Interceptors;
 
+use Core\Service\ServiceBus;
 /**
  *
  * @author hashinpanakkaparambil
  */
-interface MediaTypeProvider
+interface InterceptorInterface
 {
-    public function getMediaType();
-    public function getMediaContent($serviceResult);
+    public function preDispatch(ServiceBus $bus);
+    public function postDispatch(ServiceBus $bus);
 }

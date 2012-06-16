@@ -27,6 +27,8 @@ class Request
     private $methodKey = 'REQUEST_METHOD';
     private $methodOverride;
     private $overrideKey = 'X-HTTP-METHOD-OVERRIDE';
+    private $serviceUrl;
+    private $baseUrl;
     
     public function __construct()
     {
@@ -54,6 +56,15 @@ class Request
     public function getUrl()
     {
         return $_SERVER['REQUEST_URI'];
+    }
+    
+    public function getAccept()
+    {
+        if (!isset($_SERVER['HTTP_ACCEPT'])) {
+            return '';
+        }
+        
+        return $_SERVER['HTTP_ACCEPT'];
     }
     
     public function getMethod()
@@ -157,4 +168,38 @@ class Request
         $this->params->set($name, $value);
         return $this;
     }
+    
+    public function setServiceUrl($url)
+    {
+        $this->serviceUrl = (string) $url;
+        return $this;
+    }
+    
+    public function getServiceUrl()
+    {
+        $url = $this->getUrl();
+        $url = ltrim($url, '/');
+        $url = rtrim($url, '/');
+        $url .= '/';
+        $baseUrl = ltrim($this->baseUrl, '/');
+        $baseUrl = rtrim($baseUrl, '/');
+        return str_replace($baseUrl, '', $url);
+    }
+    
+    public function setBaseUrl($url)
+    {
+        $this->baseUrl = (string) $url;
+        return $this;
+    }
+    
+    public function getBaseUrl()
+    {
+        return $this->baseUrl;
+    }
+    
+    public function getServer()
+    {
+        return $this->server;
+    }
+    
 }
