@@ -1,0 +1,16 @@
+{
+    "params": {
+        "": "world"
+    },
+    "dependencies": {
+        "serviceController" : {
+            "type": "Core\\Service\\FrontController",
+            "configuration": {
+            },
+            "properties": {
+                "controllerResolver": "@urlControllerResolver",
+                "controllerDir": ""
+            }
+        },        
+    }
+}

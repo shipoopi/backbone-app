@@ -50,3 +50,32 @@ class Inject
         return $this->reflectionProperty;
     }
 }
+
+/**
+ * @Annotation 
+ */
+class Value
+{
+    private $reflectionProperty;
+    public $value;
+    public $mandatory = true;
+    
+    public function setReflectionProperty(\ReflectionProperty $prop)
+    {
+        $this->reflectionProperty = $prop;
+    }
+    
+    public function getReflectionProperty()
+    {
+        return $this->reflectionProperty;
+    }
+}
+
+/**
+ *  @Annotation 
+ */
+class Configurable
+{
+    public $value;
+    public $mandatory = false;
+}

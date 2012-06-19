@@ -1,5 +1,7 @@
 <?php
 
+use Core\DependencyInjection\Container;
+
 class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
 
@@ -31,6 +33,13 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
         Zend_Registry::set('serviceController', $controller);
         return $controller;
         
+    }
+    
+    public function _initServiceApp()
+    {
+        $dependenciesFile = APPLICATION_PATH . '/configs/application.json';
+        $application = new Container(json_decode(file_get_contents($dependenciesFile), true));
+        Zend_Registry::set('application', $application);
     }
 
     public function _initPaths()

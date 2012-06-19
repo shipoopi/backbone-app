@@ -16,6 +16,8 @@ use Core\Util\KeyValueStore,
  */
 class ServiceBus implements KeyValueStoreInterface
 {
+    private $container;
+    private $service;
     private $request;
     private $response;
     private $dispatched = false;
@@ -26,6 +28,7 @@ class ServiceBus implements KeyValueStoreInterface
         $this->request = $request;
         $this->response = $response;
         $this->pool = new KeyValueStore();
+        $this->resources = new KeyValueStore();
     }
     
     public function get($name)
@@ -41,6 +44,16 @@ class ServiceBus implements KeyValueStoreInterface
         
         $this->pool->set($name, $value);
         return $this;
+    }
+    
+    public function getService()
+    {
+        return $this->service;
+    }
+    
+    public function setService($service)
+    {
+        $this->service = $service;
     }
     
     public function getRequest()

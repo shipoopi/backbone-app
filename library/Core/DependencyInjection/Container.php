@@ -21,6 +21,19 @@ class Container
 {
 
     /**
+     * Holds parameter mappings
+     * 
+     * @var type 
+     */
+    private $params = array();
+    
+    /**
+     * Holds vars
+     * @var type 
+     */
+    private $vars = array();
+    
+    /**
      * Holds the name type mappings
      * @var array
      */
@@ -45,6 +58,12 @@ class Container
      * @var array 
      */
     private $superTypes = array();
+    
+    private $configuration = array();
+    
+    private $configVars = array();
+    
+    private $valueResolver;
 
     /**
      * Instanciates a class without calling its constructor
@@ -59,7 +78,18 @@ class Container
 
         return clone $prototype;
     }
+    
+    private function replaceParams(&$val, $index)
+    {
+        $val = str_replace(
+            array_keys($this->vars), array_values($this->vars), $val);
+    }
 
+    private function variablize($item)
+    {
+        return '${' . $item . '}';
+    }
+    
     /**
      * Container constructor
      * 
@@ -67,11 +97,13 @@ class Container
      * name => type mappings
      * @param array $dependencies optional
      */
-    public function __construct(array $dependencies = array())
+    public function __construct(array $configuration = array())
     {
-        foreach ($dependencies as $dependency => $type) {
-            $this->registerDependency($dependency, $type);
-        }
+        
+        $this->setConfiguration($configuration);
+        $valueResolver = new ValueResolver($this);
+        $this->valueResolver = $valueResolver;
+        $this->configurationInjector = new ConfigurationInjector($valueResolver);
     }
 
     /**
@@ -92,8 +124,23 @@ class Container
         }
 
         $type = $this->dependencies[$key];
-
-        return $this->getType($type, $throwException);
+        $instance = $this->getType($type, $throwException);
+//        //perform value injections and property injections
+//        if (isset($this->properties[$key])) {
+//            $props = $this->properties[$key];
+//            $this->propertyInjector->inject($instance, $props);
+//        }
+        
+        //configuration
+        $configVars = array();
+        if (isset( $this->configVars[$key])) {
+            $configVars = $this->configVars[$key];
+        }
+        
+        $this->configurationInjector->inject($instance, $configVars);
+        
+        
+        return $instance;
     }
 
     /**
@@ -191,4 +238,66 @@ class Container
         }
     }
 
+    public function registerConfiguration($dependency, array $rootConf)
+    {
+        $dependency = trim((string) $dependency);
+        
+        if (!isset($rootConf['configuration'])) {
+            return false;
+        }
+        
+        $config = $rootConf['configuration'];
+        $this->configuration[$dependency] = $config;
+        
+        $configVars = array();
+        $configVars = array_map(array($this, 'variablize'), array_keys($config));
+        $configVars = array_combine($configVars, array_values($config));
+        
+        $this->configVars[$dependency] = $configVars;
+        return true;
+    }
+    
+    public function setConfiguration(array $configuration)
+    {
+        if (isset($configuration['params'])) {
+            if (!is_array('params')) {
+                throw new \UnexpectedValueException(
+                    'params should be an array');
+            }
+            
+            $this->params = $configuration['params'];
+        }
+        
+        $this->vars = array_map(
+            array($this, 'variablize'), array_keys($this->params));
+        
+        if (!empty($this->vars)) {
+            $this->vars = array_combine($this->vars, array_values($this->params));
+        }
+        
+        if (!isset($configuration['dependencies'])) {
+            return;
+        }
+
+        $dependencies = $configuration['dependencies'];
+        array_walk_recursive($dependencies, array($this, 'replaceParams'));
+        
+        foreach ($dependencies as $dependency => $conf) {
+            $properties = array();
+            if (isset($conf['properties'])) {
+                $properties = $conf['properties'];
+            }
+            
+            if (!isset($conf['type'])) {
+                throw new \LogicException(sprintf(
+                    'Type not specified for dependency %s', $dependency));
+            }
+            
+            $type = $conf['type'];
+            $this->registerDependency($dependency, $type);
+            $this->registerConfiguration($dependency, $conf);
+        }
+        
+        return $this;
+    }
 }

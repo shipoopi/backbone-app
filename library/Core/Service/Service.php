@@ -105,5 +105,4 @@ class Service implements ArrayRepresentable, PipeInterface
             call_user_func_array($this->callable, array($request));
         $bus->set('serviceResult', $serviceResponse);
     }
-
 }

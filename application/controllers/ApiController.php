@@ -7,8 +7,10 @@ class Default_ApiController extends Zend_Controller_Action
     {
         $this->_helper->layout->disableLayout();
         $this->_helper->viewRenderer->setNoRender(true);
-        $serviceController = Zend_Registry::get('serviceController');
-        $this->getResponse()->appendBody($serviceController->run());
+        $application = Zend_Registry::get('application');
+        var_dump($application);die;
+//        $serviceController = Zend_Registry::get('serviceController');
+//        $this->getResponse()->appendBody($serviceController->run());
     }
 
 }

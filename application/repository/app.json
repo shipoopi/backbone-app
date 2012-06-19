@@ -1,0 +1,21 @@
+{
+    "params": {
+        "database.user": "root"
+    },
+    
+    "dependencies" : {
+        "frontControllerFactory": {
+            "className" : "Core\Service\FrontControllerFactory",
+            "arguments ": "",
+            "properties" : {
+                "container": "@container@",
+                "database.user" : "${database.user}",
+                "database.password": "${database.password}",
+                "mediaTypes": {
+                    "application/json": "@jsonProvider"
+                },
+                "services": "app-services.json"
+            }
+        }
+    }
+}

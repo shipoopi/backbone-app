@@ -13,6 +13,14 @@ defined('TEST_LIB')
     || define('TEST_LIB',
               realpath(realpath(dirname(__FILE__) . '/../../../library')));
 
+defined('TEST_ROOT')
+    || define('TEST_ROOT',
+              realpath(realpath(dirname(__FILE__) . '/../../')));
+
+defined('TEST_FIXTURES')
+    || define('TEST_FIXTURES',
+              realpath(realpath(dirname(__FILE__) . '/../../fixtures')));
+
 defined('LIB')
     || define('LIB',
               realpath(realpath(dirname(__FILE__) . '/../../../../library')));
@@ -26,7 +34,7 @@ defined('APPLICATION_ENV')
 // Ensure library/ is on include_path
 set_include_path(implode(PATH_SEPARATOR,
                          array(
-        TEST_LIB, LIB,
+        TEST_LIB, LIB, TEST_FIXTURES,
         get_include_path()
     )));
 
